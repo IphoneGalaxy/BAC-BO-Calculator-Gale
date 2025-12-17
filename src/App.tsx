@@ -1,5 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, DollarSign, Target, Power, Zap, ShieldAlert, AlertCircle, Coins } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { DollarSign, Power, Zap, ShieldAlert, AlertCircle, Coins } from 'lucide-react';
+
+interface Step {
+  id: number;
+  name: string;
+  pb: number;
+  tie: number;
+  totalInvested: number;
+  accumulatedLossNext: number;
+  netProfit: number;
+  tieBalance: number;
+}
 
 const App = () => {
   const [baseBet, setBaseBet] = useState(25); // Aposta Inicial
@@ -7,7 +18,7 @@ const App = () => {
   const [protectionMode, setProtectionMode] = useState('none'); // 'none', 'gale', 'all'
   const [protectionStrategy, setProtectionStrategy] = useState('fixed'); // 'calculated' (Recuperar) ou 'fixed' (Moedinha)
   const [fixedChipValue, setFixedChipValue] = useState(1); // Valor da "Moedinha"
-  const [steps, setSteps] = useState([]);
+  const [steps, setSteps] = useState<Step[]>([]);
   
   const TIE_PAYOUT_MULT = 5; 
   const PB_REFUND = 0.90; 
@@ -16,12 +27,12 @@ const App = () => {
   const chipOptions = [0.50, 1, 2.50, 5, 10, 25];
 
   // Garante que respeita o mínimo da casa
-  const validateBet = (val) => {
+  const validateBet = (val: number) => {
     if (val <= 0) return 0;
     return Math.max(val, houseMin);
   };
 
-  const ceilToMin = (value) => {
+  const ceilToMin = (value: number) => {
     if (value <= 0) return 0;
     let effectiveValue = Math.max(value, houseMin);
     return Math.ceil(effectiveValue / 0.5) * 0.5;
@@ -32,9 +43,9 @@ const App = () => {
   }, [baseBet, protectionMode, houseMin, protectionStrategy, fixedChipValue]);
 
   const calculateStrategy = () => {
-    let currentSteps = [];
+    let currentSteps: Step[] = [];
     
-    const calculateStep = (stepName, stepId, previousLoss) => {
+    const calculateStep = (stepName: string, stepId: number, previousLoss: number): Step => {
       
       // 1. Aposta Principal (Progressão Simples)
       let pbBet = 0;
