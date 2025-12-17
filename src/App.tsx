@@ -139,8 +139,19 @@ const App = () => {
                 <DollarSign size={14} className="absolute left-3 top-3.5 text-slate-500" />
                 <input 
                   type="number" 
+                  min="0"
+                  step="0.5"
                   value={baseBet}
-                  onChange={(e) => setBaseBet(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setBaseBet(val === '' ? 0 : Number(val));
+                  }}
+                  onFocus={(e) => e.target.select()}
+                  onBlur={(e) => {
+                    if (e.target.value === '' || Number(e.target.value) < houseMin) {
+                      setBaseBet(houseMin);
+                    }
+                  }}
                   className="w-full bg-[#0f172a] border border-slate-600 rounded-lg py-2.5 pl-8 pr-2 text-lg font-bold text-white focus:border-indigo-500 outline-none"
                 />
               </div>
